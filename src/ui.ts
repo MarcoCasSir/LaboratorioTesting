@@ -1,13 +1,17 @@
-import { getPuntuacion, setPuntuacion } from "./modelo";
+import { getPuntuacion, setPuntuacion, puntuacion } from "./modelo";
 
-import { generarCartaAleatoria, sumarPuntos, dameCarta } from "./motor";
+import {
+  jugarCarta,
+  obtenerNumeroAleatorio,
+  rutaCarta,
+  mensajeMePlanto,
+} from "./motor";
 
 export const inicioPartida = () => {
   setPuntuacion(0); // definimo la puntuacion a 0
   muestraCarta();
-  muestraPuntuacion(getPuntuacion()); // definimo mostrar la puntuacion modificada
+  muestraPuntuacion(puntuacion); // definimo mostrar la puntuacion modificada
   actualizarMensaje("");
-
   desabilitarBotones("reiniciar", true);
   desabilitarBotones("como-seria", true);
 };
@@ -15,7 +19,6 @@ export const inicioPartida = () => {
 // se encarga de actualizar el mensaje
 export const actualizarMensaje = (texto: string): void => {
   const mensaje = document.getElementById("mensaje-despues-tiros");
-
   if (
     mensaje !== null &&
     mensaje !== undefined &&
@@ -58,61 +61,17 @@ export const nuevaPartida = (): void => {
 };
 
 // se encarga de mostrar la carta que se ha generado.
-export const muestraCarta = (carta?: number): void => {
+export const muestraCarta = (numeroCarta?: number): void => {
   const imagen = document.getElementById("imagen-carta");
   if (
     imagen !== null &&
     imagen !== undefined &&
     imagen instanceof HTMLImageElement
   ) {
-    if (typeof carta === "number") {
-      switch (carta) {
-        case 1:
-          imagen.src = "src/img/1_as-copas.jpg";
-          break;
-        case 2:
-          imagen.src = "src/img/2_dos-copas.jpg";
-          break;
-        case 3:
-          imagen.src = "src/img/3_tres-copas.jpg";
-          break;
-        case 4:
-          imagen.src = "src/img/4_cuatro-copas.jpg";
-          break;
-        case 5:
-          imagen.src = "src/img/5_cinco-copas.jpg";
-          break;
-        case 6:
-          imagen.src = "src/img/6_seis-copas.jpg";
-          break;
-        case 7:
-          imagen.src = "src/img/7_siete-copas.jpg";
-          break;
-        case 10:
-          imagen.src = "src/img/10_sota-copas.jpg";
-          break;
-        case 11:
-          imagen.src = "src/img/11_caballo-copas.jpg";
-          break;
-        case 12:
-          imagen.src = "src/img/12_rey-copas.jpg";
-          break;
-        default:
-          imagen.src = "src/img/bacl.jpg";
-      }
-    } else {
-      imagen.src = "src/img/back.jpg";
-    }
+    imagen.src = rutaCarta(numeroCarta);
+  } else {
+    console.warn("Elemento 'imagen-carta' no encontrado");
   }
-};
-
-// se encarga de mostrar las posible situacion si hubieramos continuado el juego
-export const proximaCarta = (): void => {
-  let carta = generarCartaAleatoria();
-
-  muestraCarta(carta);
-  sumarPuntos(carta);
-  gameOver();
 };
 
 // se encarga de desabilitar todos los botones.
@@ -173,15 +132,9 @@ export const eventos = (): void => {
 // se encarga de mostrar el mensaje cuando se decide plantarse
 const mePlanto = (): void => {
   const puntuacion = getPuntuacion();
-  if (puntuacion < 4) {
-    actualizarMensaje(`HAS SIDO MUY CONSERVADOR`);
-  } else if (puntuacion === 5) {
-    actualizarMensaje(`TE HA ENTRADO EL CAGUELO EH!!!`);
-  } else if (puntuacion === 6 || puntuacion === 7) {
-    actualizarMensaje(`CASI CASI  EH!!!`);
-  } else if (puntuacion === 7.5) {
-    actualizarMensaje(`ENHORABUENA - HAS GANADO !!!`);
-  }
+  const mensaje = mensajeMePlanto(puntuacion);
+
+  actualizarMensaje(mensaje);
 
   desabilitarBotones("me-planto", true);
   desabilitarBotones("reiniciar", false);
@@ -202,4 +155,23 @@ export const muestraPuntuacion = (puntuacion: number): void => {
   } else {
     console.log("Elemento 'puntos' no encontrado ");
   }
+};
+
+// al activar el evento del boton dame carta, inicializa las funciones necesarias a partir de la carta generada automaticamente
+export const dameCarta = (): void => {
+  const numeroAleatorio = obtenerNumeroAleatorio();
+  const { numeroCarta, puntuacion } = jugarCarta(numeroAleatorio);
+
+  muestraCarta(numeroCarta);
+  muestraPuntuacion(puntuacion);
+  gameOver();
+};
+
+// se encarga de mostrar las posible situacion si hubieramos continuado el juego
+export const proximaCarta = (): void => {
+  const numeroAleatorio = obtenerNumeroAleatorio();
+  const { numeroCarta, puntuacion } = jugarCarta(numeroAleatorio);
+  muestraCarta(numeroCarta);
+  muestraPuntuacion(puntuacion);
+  gameOver();
 };
