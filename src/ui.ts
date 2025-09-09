@@ -15,6 +15,7 @@ export const inicioPartida = () => {
 // se encarga de actualizar el mensaje
 export const actualizarMensaje = (texto: string): void => {
   const mensaje = document.getElementById("mensaje-despues-tiros");
+
   if (
     mensaje !== null &&
     mensaje !== undefined &&
