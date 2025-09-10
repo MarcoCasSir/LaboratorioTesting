@@ -5,7 +5,7 @@ export const obtenerNumeroAleatorio = (): number =>
   Math.floor(Math.random() * 10) + 1;
 
 //se encarga de asignar un valor a la carta
-const valorCarta = (numeroAleatorio: number): number => {
+export const valorCarta = (numeroAleatorio: number): number => {
   return numeroAleatorio > 7 ? 0.5 : numeroAleatorio;
 };
 
@@ -15,8 +15,8 @@ export const generarCartaAleatoria = (numeroAleatorio: number): number => {
 };
 
 // se encarga de modificar la puntuacion y envocar la funcion para mostrar la puntuaccion.
-export const sumarPuntos = (numeroCarta: number): number => {
-  const nuevaPuntuacion = puntuacion + valorCarta(numeroCarta);
+export const sumarPuntos = (numeroAleatorio: number): number => {
+  const nuevaPuntuacion = puntuacion + valorCarta(numeroAleatorio);
   setPuntuacion(nuevaPuntuacion);
   return nuevaPuntuacion;
 };
